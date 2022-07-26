@@ -1,36 +1,34 @@
-version: 1.0.0
-name: Melita IO Egress
-description: Module for communication with melita.io API for devices controller
-icon: https://icons-020-demo.s3.eu-central-1.amazonaws.com/mi_melita_output.png
-type: output
-tags:
-  - Melita.io
-categories:
-  - id: category
-    name: Egress
+displayName: 'Melita IO Egress'       # Display name for the module that will be displayed in the UI.
+moduleName: 'melita-io-egress'        # Module name that will be used to reference the module, and uniquely identify the module and their versions.
+description: 'Module for communication with Melita.io API for devices controller.'       # Module description that will be displayed in the UI.
+versionName: 'v1.0.0'                    # Module version name that will be used to reference the module version, and uniquely identify the module version with a common name.
+isPublic: true                          # Boolean value that indicates if the module is Public or Private.
+categories:                             # Array of category that will be used to group the module in the UI.
+  - 'Melita'
+type: 'Output'      # Module type (Input, Processing, Output) that will be used to group the module in the UI.
 image:
-  name: weevenetwork/melita-io-egress
-  tag: latest
-environments:
-  - key: MELITA_API_URL
+  name: 'weevenetwork/melita-io-egress'     # Image name from the docker registry.
+  tag: 'v1.0.0'                               # Image tag from the docker registry.
+  homepage: 'https://hub.docker.com/weevenetwork/melita-io-egress'      # Image homepage from the docker registry.
+repository: 'https://github.com/weeve-modules/melita-io-egress'     # Repository URL to source code.
+envs:                                   # Array of environment variables that will be used to configure the module. Also used to show related fields on the UI.
+  - name: Melita API URL
+    key: MELITA_API_URL
     description: Melita API URL used for communication
-    value: ''
-    default: ''
-    type: string
-    name: Melita API URL    
-  - key: EXECUTE_SINGLE_COMMAND
+    value: ''    
+    type: 'text'    
+  - name: Execute single command
+    key: EXECUTE_SINGLE_COMMAND
     description: Only execute single command via call
-    value: ''
-    default: no
-    type: enum
+    value: 'no'    
+    type: 'select'
     options:
       - yes
       - no
-    name: Execute single command
-  - key: SINGLE_COMMAND
+  - name: Single command name
+    key: SINGLE_COMMAND
     value: ''
-    default: ''
-    type: enum
+    type: 'select'
     options:
       - createDevice
       - getDevices
@@ -49,25 +47,25 @@ environments:
       - flushDeviceQueue
       - suspendResumeDevice
       - getDeviceUsage
-    name: Single command name
-  - key: AUTHENTICATION_API_KEY
+  - name: Authentication token
+    key: AUTHENTICATION_API_KEY
     description: Authentication token for authorization
-    value: ''
-    default: ''
-    type: string
-    name: Authentication token
-  - key: ERROR_URL
+    value: ''    
+    type: 'text'
+  - name: Error reporting URL
+    key: ERROR_URL
     description: URL for reporting error if request fails
-    value: ''
-    default: ''
-    type: string
-    name: Error reporting URL
-commands: []
-document:
-  ports: []
-  volumes: []
-  restart_policy:
-    condition: on-failure
-    delay: 10s
-    max_attempts: 3
-    window: 120s
+    value: ''    
+    type: 'text'
+ports:                                  # Array of ports that will be exposed by the module.
+  - container: 8080                     # Port number from the container.
+    host: 8080                          # Port number to map on the host.
+mounts:
+  - container: '/data'                  # Mount path from the container.
+    host: '/data'                       # Mount path to map on the host.
+tags:                                   # Array of tags.
+  - 'NodeJS'
+  - 'Output'
+  - 'Melita'
+  - 'Boilerplate 1.0.0'
+icon: 'https://icons-020-demo.s3.eu-central-1.amazonaws.com/mi_melita_output.png'    # Icon URL that will be displayed in the UI.

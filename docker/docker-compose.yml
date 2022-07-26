@@ -1,0 +1,19 @@
+version: "3.0"
+services:
+  melita-io:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    environment:
+      MODULE_NAME: "Melita IO Egress"
+      MODULE_TYPE: "Output"
+      EGRESS_URLS: "https://testdockercompose.free.beeceptor.com"
+      INGRESS_HOST: "0.0.0.0"
+      INGRESS_PORT: "80"
+      EXECUTE_SINGLE_COMMAND: 'no'
+      SINGLE_COMMAND: ''
+      MELITA_API_URL: 'https://www.melita.io/api/iot-gateway'
+      AUTHENTICATION_API_KEY: ''
+      ERROR_URL: ''
+    ports:
+      - 80:80

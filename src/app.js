@@ -13,9 +13,9 @@ const app = express()
 const winston = require('winston')
 const expressWinston = require('express-winston')
 const { processCommand } = require('./utils/melita')
-const { formatTimeDiff, isValidURL } = require('./utils/util')
+const { formatTimeDiff } = require('./utils/util')
 
-//initialization
+// initialization
 app.use(express.urlencoded({ extended: true }))
 app.use(
   express.json({
@@ -29,7 +29,7 @@ app.use(
   })
 )
 
-//logger
+// logger
 app.use(
   expressWinston.logger({
     transports: [
@@ -51,7 +51,7 @@ app.use(
   })
 )
 const startTime = Date.now()
-//health check
+// health check
 app.get('/health', async (req, res) => {
   res.json({
     serverStatus: 'Running',
@@ -59,13 +59,13 @@ app.get('/health', async (req, res) => {
     module: MODULE_NAME,
   })
 })
-//main post listener
+// main post listener
 app.post('/', async (req, res) => {
-  let json = req.body
+  const json = req.body
   if (!json) {
     return res.status(400).json({ status: false, message: 'Payload structure is not valid.' })
   }
-  if (EXECUTE_SINGLE_COMMAND == 'no' && typeof json.command === 'undefined') {
+  if (EXECUTE_SINGLE_COMMAND === 'no' && typeof json.command === 'undefined') {
     return res.status(400).json({ status: false, message: 'Command is missing.' })
   }
   if (typeof json.command.params === 'undefined') {
@@ -74,11 +74,11 @@ app.post('/', async (req, res) => {
   if (typeof json.command.deviceEUI === 'undefined') {
     return res.status(400).json({ status: false, message: 'Missing deviceEUI.' })
   }
-  if (EXECUTE_SINGLE_COMMAND == 'yes' && SINGLE_COMMAND == '') {
+  if (EXECUTE_SINGLE_COMMAND === 'yes' && !SINGLE_COMMAND) {
     return res.status(400).json({ status: false, message: 'Single command not specified.' })
   }
   let result = false
-  if (EXECUTE_SINGLE_COMMAND == 'yes') {
+  if (EXECUTE_SINGLE_COMMAND === 'yes') {
     json.command.name = SINGLE_COMMAND
     result = await processCommand(json)
   } else {
@@ -87,8 +87,8 @@ app.post('/', async (req, res) => {
   if (result === false) {
     return res.status(400).json({ status: false, message: 'Bad command or Parameters provided.' })
   }
-  if (typeof result.status !== 'undefined' && result.status === false && ERROR_URL != '') {
-    const callRes = await fetch(ERROR_URL, {
+  if (typeof result.status !== 'undefined' && result.status === false && ERROR_URL) {
+    await fetch(ERROR_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -97,7 +97,7 @@ app.post('/', async (req, res) => {
         result,
       }),
     })
-  } else if (isValidURL(EGRESS_URL)) {
+  } else if (EGRESS_URL) {
     const callRes = await fetch(EGRESS_URL, {
       method: 'POST',
       headers: {
@@ -123,12 +123,12 @@ app.post('/', async (req, res) => {
   }
 })
 
-//handle exceptions
+// handle exceptions
 app.use(async (err, req, res, next) => {
   if (res.headersSent) {
     return next(err)
   }
-  let errCode = err.status || 401
+  const errCode = err.status || 401
   res.status(errCode).send({
     status: false,
     message: err.message,
